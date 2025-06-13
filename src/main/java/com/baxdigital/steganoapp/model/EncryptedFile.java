@@ -73,7 +73,6 @@ public class EncryptedFile {
     public void setUploadDate(LocalDateTime uploadDate) {
         this.uploadDate = uploadDate;
     }
-
     public String getPassword() {
         return password;
     }
