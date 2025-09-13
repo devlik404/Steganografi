@@ -11,7 +11,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/steganografi")
-public class UsersController {
+public class
+UsersController {
     @Autowired
     private UsersService users;
 

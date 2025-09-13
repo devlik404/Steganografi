@@ -1,6 +1,7 @@
 package com.baxdigital.steganoapp.controller;
 
 import com.baxdigital.steganoapp.service.EncryptedFileService;
+import org.cloudinary.json.JSONArray;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,8 +21,8 @@ public class FileController {
             @RequestParam String password) {
         try {
       
-           fileService.saveMetaData(file, image, password);
-            return ResponseEntity.ok("Upload dan proses berhasil!");
+          String url =  fileService.saveMetaData(file, image, password);
+            return ResponseEntity.ok(url);
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)

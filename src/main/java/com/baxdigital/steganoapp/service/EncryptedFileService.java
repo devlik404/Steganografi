@@ -5,6 +5,7 @@ import com.baxdigital.steganoapp.repository.EncryptedFileRepository;
 import com.baxdigital.steganoapp.util.FileEncryptor;
 import com.baxdigital.steganoapp.util.SteganographyUtil;
 
+import org.cloudinary.json.JSONArray;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -19,6 +20,7 @@ import java.io.File;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Map;
 import java.util.UUID;
 
@@ -35,7 +37,7 @@ public class EncryptedFileService {
 
     private final String uploaddir = "./uploads/";
 
-    public void saveMetaData(MultipartFile file, MultipartFile image, String password) throws Exception {
+    public String saveMetaData(MultipartFile file, MultipartFile image, String password) throws Exception {
 
         // 1. Enkripsi file
         byte[] encryptedData = FileEncryptor.encrypt(file.getBytes(), password);
@@ -84,7 +86,7 @@ public class EncryptedFileService {
         System.out.println("Disimpan ke: " + outputImage.getAbsolutePath());
         // upload to cloudinary
       Map uploadParams = ObjectUtils.asMap(
-    "folder", "stegano_images"  // contoh folder
+    "folder", "stegano_images"
 );
         Map uploadResult = cloudinary.uploader().upload(outputImage, uploadParams);
         String imageUrl = uploadResult.get("secure_url").toString();
@@ -95,11 +97,13 @@ public class EncryptedFileService {
         encryptedFile.setOriginalFileName(file.getOriginalFilename());
         encryptedFile.setEncryptedFileName(file.getOriginalFilename() + ".enc");
         encryptedFile.setStegoImageFileName(imageUrl);
-        encryptedFile.setPassword(password);
+        encryptedFile.setEncryptionKey(password);
         encryptedFile.setFileSize(file.getSize());
         encryptedFile.setFileType(file.getContentType());
         encryptedFile.setUploadDate(LocalDateTime.now());
 
         repository.save(encryptedFile);
+
+        return imageUrl;
     }
 }
